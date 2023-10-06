@@ -77,7 +77,7 @@ def enemy():
     for car in cars:
         car.kill()
     car1 = Enemy('car1.png', randint(30, 380), randint(-110, -70), 3, 65, 90)
-    car2 = Enemy('car2.png', randint(30, 380), randint(-110, -70), 3, 55, 100)
+    car2 = Enemy('car8.png', randint(30, 380), randint(-110, -70), 3, 50, 90)
     car3 = Enemy('car3.png', randint(30, 380), randint(-110, -70), 3, 45, 90)
     car4 = Enemy('car4.png', randint(30, 380), randint(-110, -70), 3, 45, 90)
     car5 = Enemy('car5.png', randint(30, 380), randint(-110, -70), 3, 65, 90)
@@ -181,6 +181,8 @@ while game:
             if restart.rect.collidepoint(x_button, y_button):
                 skip = 0
                 hero.hearts = 3
+                bird1.rect.x = randint(-90, -50)
+                bird2.rect.x = randint(515, 550)
                 for car in cars:
                     car.rect.y = randint(-110, -70)
                 enemy()
