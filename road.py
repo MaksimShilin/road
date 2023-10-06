@@ -21,6 +21,7 @@ class GameSprite(sprite.Sprite):
             self.fire = True
 
 
+
 class Player(GameSprite):
     def __init__(self, player_image, player_x, player_y, player_speed=0, image_wight=0, image_height=0, hearts=3):
         super().__init__(player_image, player_x, player_y, player_speed, image_wight, image_height)
@@ -31,6 +32,11 @@ class Player(GameSprite):
             self.rect.x -= self.speed
         if keys_pressed[K_RIGHT] and self.rect.x < x-70:
             self.rect.x += self.speed
+    def bird1(self):
+        self.rect.x += self.speed
+    def bird2(self):
+        self.rect.x -= self.speed
+
 
 class Enemy(GameSprite):
     def __init__(self, player_image, player_x, player_y, player_speed=0, image_wight=0, image_height=0, hearts=1):
@@ -98,8 +104,12 @@ heart1 = GameSprite('heart1.png', -10, 5, 0, 55, 35)
 heart2 = GameSprite('heart1.png', 25, 5, 0, 55, 35)
 heart3 = GameSprite('heart1.png', 60, 5, 0, 55, 35)
 
+bird1 = Player('bird1.png', randint(-90, -50), 80, 1, 50, 50)
+bird2 = Player('bird2.png', randint(515, 550), 160, 1, 50, 50)
+
 cars = sprite.Group()
 enemy()
+
 
 start = Button(150, 300, 150, 65, (255, 255, 255))
 start.draw_rect((0, 0, 0))
@@ -123,6 +133,10 @@ while game:
         hero.move()
         cars.draw(window)
         cars.update()
+        bird1.reset()
+        bird1.bird1()
+        bird2.reset()
+        bird2.bird2()
 
         for i in range(hero.hearts):
             list_hearts[i].reset() 
@@ -133,14 +147,21 @@ while game:
         hits = sprite.spritecollide(hero, cars, True)
         for hit in hits:
             hero.hearts -= 1
-            new_car = Enemy('car7.png', randint(30, 380), randint(-110, -70), 3, 55, 90)
+            new_car = Enemy('car6.png', randint(30, 380), randint(-110, -70), 3, 60, 90)
             cars.add(new_car)
+
+        if bird1.rect.x >= 500:
+            bird1.rect.x = randint(-90, -50)
+        
+        if bird2.rect.x <= -50:
+            bird2.rect.x = randint(515, 550)
+
         
         if hero.hearts <= 0:
             lose()
             restart.draw_rect((0, 0, 0))
             restart.create_text(40)
-            restart.draw_text((0, 0, 0), 'RESTART', 24, 20)
+            restart.draw_text((0, 0, 0), 'RESTART', 12, 20)
 
         if skip >= 100:
             win = font1.render('YOU WIN!', True, (0, 255, 0))
