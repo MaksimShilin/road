@@ -40,6 +40,8 @@ class Enemy(GameSprite):
         self.rect.y += self.speed
         if self.rect.y > 740:
             self.rect.y = -70
+            global skip
+            skip += 1
             self.rect.x = randint(30, 380)
 
 class Button():
@@ -68,12 +70,19 @@ def enemy():
     global cars
     for car in cars:
         car.kill()
-    car1 = Enemy('car1.png', randint(30, 380), randint(-110, -70), 1, 65, 90)
-    car2 = Enemy('car2.png', randint(30, 380), randint(-110, -70), 1, 45, 90)
-    car3 = Enemy('car3.png', randint(30, 380), randint(-110, -70), 1, 45, 90)
-    car4 = Enemy('car4.png', randint(30, 380), randint(-110, -70), 1, 45, 90)
-    car5 = Enemy('car5.png', randint(30, 380), randint(-110, -70), 1, 65, 90)
+    car1 = Enemy('car1.png', randint(30, 380), randint(-110, -70), 3, 65, 90)
+    car2 = Enemy('car2.png', randint(30, 380), randint(-110, -70), 3, 55, 100)
+    car3 = Enemy('car3.png', randint(30, 380), randint(-110, -70), 3, 45, 90)
+    car4 = Enemy('car4.png', randint(30, 380), randint(-110, -70), 3, 45, 90)
+    car5 = Enemy('car5.png', randint(30, 380), randint(-110, -70), 3, 65, 90)
     cars.add(car1, car2, car3, car4, car5)
+
+def lose():
+    lose = font1.render('YOU LOSE!', True, (255, 0, 0))
+    window.blit(lose, (160, 150))
+    global end
+    end = False
+    
 
 
 x = 450
@@ -85,40 +94,78 @@ window.blit(background, (0,0))
 
 hero = Player('hero.png', 190, 550, 2, 65, 90, 3)
 
-sprite8 = GameSprite('heart1.png', 1, 5, 0, 55, 35)
-sprite9 = GameSprite('heart1.png', 41, 5, 0, 55, 35)
-sprite10 = GameSprite('heart1.png', 81, 5, 0, 55, 35)
+heart1 = GameSprite('heart1.png', -10, 5, 0, 55, 35)
+heart2 = GameSprite('heart1.png', 25, 5, 0, 55, 35)
+heart3 = GameSprite('heart1.png', 60, 5, 0, 55, 35)
 
 cars = sprite.Group()
 enemy()
 
-list_hearts = [sprite8, sprite9, sprite10]
+start = Button(150, 300, 150, 65, (255, 255, 255))
+start.draw_rect((0, 0, 0))
+start.create_text(40)
+start.draw_text((0, 0, 0), 'START', 30, 20)
+
+restart = Button(150, 300, 150, 65, (255, 255, 255))
+
+
+
+skip = 0
+font1 = font.SysFont('Arial', 35)
+list_hearts = [heart1, heart2, heart3]
 clock = time.Clock()
+end = False
 game = True
 while game:
-    window.blit(background, (0,0))
-    hero.reset()
-    hero.move()
-    cars.draw(window)
-    cars.update()
+    if end:
+        window.blit(background, (0,0))
+        hero.reset()
+        hero.move()
+        cars.draw(window)
+        cars.update()
 
-    for i in range(hero.hearts):
-        list_hearts[i].reset()  
-    
-    hits = sprite.spritecollide(hero, cars, True)
-    for hit in hits:
-        hero.hearts -= 1
-        car6 = Enemy('car6.png', randint(30, 380), randint(-110, -70), 4, 65, 90)
-        cars.add(car6)
-        if car6 in cars:
-            car7 = Enemy('car7.png', randint(30, 380), randint(-110, -70), 4, 65, 90)
-            cars.add(car7)
-        if car7 in cars:
-            car8 = Enemy('car8.png', randint(30, 380), randint(-110, -70), 4, 65, 90)
-            cars.add(car8)
+        for i in range(hero.hearts):
+            list_hearts[i].reset() 
 
-    
+        count = font1.render('Счёт:'+str(skip), True, (0, 0, 0))
+        window.blit(count, (5,40))
+        
+        hits = sprite.spritecollide(hero, cars, True)
+        for hit in hits:
+            hero.hearts -= 1
+            new_car = Enemy('car7.png', randint(30, 380), randint(-110, -70), 3, 55, 90)
+            cars.add(new_car)
+        
+        if hero.hearts <= 0:
+            lose()
+            restart.draw_rect((0, 0, 0))
+            restart.create_text(40)
+            restart.draw_text((0, 0, 0), 'RESTART', 24, 20)
+
+        if skip >= 100:
+            win = font1.render('YOU WIN!', True, (0, 255, 0))
+            window.blit(win, (165, 150))
+            end = False
+            restart.draw_rect((0, 0, 0))
+            restart.create_text(40)
+            restart.draw_text((0, 0, 0), 'RESTART', 12, 20)
+            
+
+        
     for e in event.get():
+        if e.type == MOUSEBUTTONDOWN and e.button == 1:
+            x_button, y_button = e.pos
+            if start.rect.collidepoint(x_button, y_button):
+                end = True
+            if restart.rect.collidepoint(x_button, y_button):
+                skip = 0
+                hero.hearts = 3
+                for car in cars:
+                    car.rect.y = randint(-110, -70)
+                enemy()
+                cars.draw(window)
+                cars.update()
+                end = True
         if e.type == QUIT:
             game = False
     display.update()
