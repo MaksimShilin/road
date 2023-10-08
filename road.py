@@ -121,8 +121,7 @@ enemy()
 coins = sprite.Group()
 coins.add(coin)
 
-goldhearts = sprite.Group()
-goldhearts.add(goldheart)
+
 
 
 
@@ -158,15 +157,19 @@ while game:
 
         count = font1.render('Счёт:'+str(skip), True, (0, 0, 0))
         window.blit(count, (5,40))
+
+        if sprite.spritecollide(hero, coins, True):
+            goldheart.reset()
+            hero.goldenheart += 1
         
         hits = sprite.spritecollide(hero, cars, True)
         for hit in hits:
-            if hero.goldenheart == 1:
+            if hero.goldenheart >= 1:
                 hero.goldenheart -= 1
                 new_car = Enemy('car2.png', randint(30, 380), randint(-110, -70), 1, 55, 100)
                 cars.add(new_car)
-                for goldheart in goldhearts:
-                    goldheart.kill()
+                # goldheart.rect.x = 700
+                # goldheart.rect.y = -100
             else:
                 hero.hearts -= 1
                 new_car = Enemy('car6.png', randint(30, 380), randint(-110, -70), 1, 60, 90)
@@ -183,14 +186,7 @@ while game:
             coins.draw(window)
             coins.update()
 
-        
-        if sprite.spritecollide(hero, coins, True):
-            hero.goldenheart += 1
-            goldhearts.draw(window)
-            
-
-
-        if hero.goldenheart == 1:
+        if hero.goldenheart >= 1:
             if hero.hearts <= 0 and hero.goldenheart <= 0:
                 lose()
                 restart.draw_rect((0, 0, 0))
@@ -220,6 +216,7 @@ while game:
             if restart.rect.collidepoint(x_button, y_button):
                 skip = 0
                 hero.hearts = 3
+                hero.goldenheart = 0
                 bird1.rect.x = randint(-90, -50)
                 bird2.rect.x = randint(515, 550)
                 for car in cars:
