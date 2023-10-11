@@ -218,10 +218,12 @@ while game:
                 hero.goldenheart = 0
                 bird1.rect.x = randint(-90, -50)
                 bird2.rect.x = randint(515, 550)
+                coins.add(coin)
                 for coin in coins:
                     coin.rect.y = -70
-                coins.draw(window)
-                coins.update()
+                if skip >= 5:
+                    coins.draw(window)
+                    coins.update()
                 for car in cars:
                     car.rect.y = randint(-110, -70)
                 enemy()
