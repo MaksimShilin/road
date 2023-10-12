@@ -158,7 +158,7 @@ while game:
         count = font1.render('Счёт:'+str(skip), True, (0, 0, 0))
         window.blit(count, (5,40))
 
-        if skip >= 5:
+        if skip >= 75:
             coins.draw(window)
             coins.update()
 
@@ -221,7 +221,7 @@ while game:
                 coins.add(coin)
                 for coin in coins:
                     coin.rect.y = -70
-                if skip >= 5:
+                if skip >= 75:
                     coins.draw(window)
                     coins.update()
                 for car in cars:
